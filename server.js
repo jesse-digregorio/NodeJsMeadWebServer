@@ -13,12 +13,14 @@ app.set('view engine', 'hbs');
 // They execute in the order added to "use"
 app.use((req, res, next) => {
     var now = new Date().toString(); 
-
     var log = `${now}: ${req.method} ${req.url}`;
 
     console.log(log);
-    fs.appendFile('server.log', log + '\n', (err) => {
-        console.log('Unable to appent to server log.');
+    console.log(__dirname + '/server.log');
+    fs.appendFile(__dirname + '/server.log', log + '\n', (err) => {
+        if (err) { 
+            console.log('Unable to append to server log.', err);
+        }
     });
 
     next(); // must call next, or the middleware will never complete. :/
@@ -40,15 +42,19 @@ hbs.registerHelper('screamIt', (text) => {
 app.get('/', (req, res) => {
     res.render('home.hbs', {
         pageTitle: 'Home Page',
-        welcomeMessage: 'Hey there, slappy. Have some marmalade.',
-        currentYear: new Date().getFullYear()
+        welcomeMessage: 'Hey there, slappy. Have some marmalade.'
+    });
+});
+
+app.get('/projects', (req, res) => {
+    res.render('projects.hbs', {
+        pageTitle: 'Projects Page'
     });
 });
 
 app.get('/about', (req, res) => {
     res.render('about.hbs', {
-        pageTitle: 'About Page',
-        currentYear: new Date().getFullYear()
+        pageTitle: 'About Page'
     });
 });
 
